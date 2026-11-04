@@ -29,7 +29,6 @@ function App() {
       .catch(err => console.error('Error adding task:', err));
   };
 
-  // 完了状態の切り替え
   const toggleTask = (task) => {
     fetch(`http://localhost:8080/api/tasks/${task.id}`, {
       method: 'PUT',
@@ -43,7 +42,6 @@ function App() {
       .catch(err => console.error('Error updating task:', err));
   };
 
-  // タスクの削除
   const deleteTask = (id) => {
     fetch(`http://localhost:8080/api/tasks/${id}`, {
       method: 'DELETE'
@@ -55,32 +53,33 @@ function App() {
   };
 
   return (
-    <div style={{ padding: '30px', fontFamily: 'sans-serif', maxWidth: '500px', margin: '0 auto' }}>
-      <h1>タスク管理アプリ</h1>
+    <div className="app-container">
+      <h1 className="app-title">タスク管理アプリ</h1>
       
-      <form onSubmit={addTask} style={{ marginBottom: '20px', display: 'flex', gap: '8px' }}>
+      <form onSubmit={addTask} className="task-form">
         <input
           type="text"
+          className="task-input"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="新しいタスクを入力..."
-          style={{ padding: '8px', flex: 1 }}
         />
-        <button type="submit" style={{ padding: '8px 16px' }}>追加</button>
+        <button type="submit" className="btn-add">追加</button>
       </form>
 
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul className="task-list">
         {tasks.map(task => (
-          <li key={task.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', background: '#f9f9f9', padding: '10px', borderRadius: '4px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', textDecoration: task.completed ? 'line-through' : 'none', color: task.completed ? '#888' : '#000' }}>
+          <li key={task.id} className="task-item">
+            <label className={`task-label ${task.completed ? 'completed-text' : ''}`}>
               <input
                 type="checkbox"
+                className="task-checkbox"
                 checked={task.completed}
                 onChange={() => toggleTask(task)}
               />
               {task.title}
             </label>
-            <button onClick={() => deleteTask(task.id)} style={{ background: '#ff4d4d', color: '#white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>削除</button>
+            <button onClick={() => deleteTask(task.id)} className="btn-delete">削除</button>
           </li>
         ))}
       </ul>
