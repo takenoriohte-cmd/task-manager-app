@@ -68,5 +68,44 @@ erDiagram
 🚀 ローカル環境での起動方法
 動作要件
 Java 17 以上
-
 Node.js 18 以上 (npm 9 以上)
+
+1. リポジトリのクローン
+Bash
+git clone [https://github.com/takenoriohte-cmd/task-manager-app.git](https://github.com/takenoriohte-cmd/task-manager-app.git)
+cd task-manager-app
+
+2. バックエンド (Spring Boot) の起動
+Bash
+cd taskmanager
+./gradlew bootRun
+APIサーバーが http://localhost:8080 で起動します。
+
+3. フロントエンド (React) の起動
+新しいターミナルを開き、以下を実行します。
+
+Bash
+cd frontend
+npm install
+npm run dev
+ブラウザで http://localhost:5173 にアクセスしてアプリケーションを使用します。
+
+
+---
+
+### 作業手順
+
+<Steps>
+<Step subtitle="2分" title="1. README.md ファイルを編集する">
+1. VS Codeでプロジェクト直下（または `frontend` / `taskmanager` の親階層）にある `README.md` を開きます。
+2. 上記のコードをコピーして貼り付け、保存します。
+*Verification:* ファイルが正常に保存されること。
+</Step>
+
+<Step subtitle="1分" title="2. 変更をGitHubへコミット＆プッシュする">
+PowerShellを開き、以下のコマンドを実行します。
+```powershell
+cd "C:\Users\takenori ohte\Desktop\task-manager"
+git add README.md
+git commit -m "Update README with project architecture and usage details"
+git push -u origin main
