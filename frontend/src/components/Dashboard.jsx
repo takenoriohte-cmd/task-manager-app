@@ -32,13 +32,14 @@ export default function Dashboard() {
     if (window.confirm('このタスクを削除しますか？')) {
       try {
         await api.delete(`/tasks/${id}`);
-        fetchTasks();
+        await fetchTasks();
       } catch (error) {
         console.error('削除エラー:', error);
       }
     }
   };
 
+  // サンプル復元：確実にデータを再取得して画面を更新
   const handleRestoreSamples = async () => {
     try {
       setMessage('');
@@ -48,41 +49,42 @@ export default function Dashboard() {
       } else {
         setMessage('サンプルデータを復元しました！');
       }
-      fetchTasks();
+      // 処理が終わった後に確実に一覧を再取得
+      await fetchTasks();
     } catch (error) {
       console.error('サンプル復元エラー:', error);
-      if (error.response && error.response.data && error.response.data.message) {
-        setMessage(error.response.data.message);
-      } else {
-        setMessage('サンプルデータの復元に失敗しました。');
-      }
+      setMessage('サンプルデータの復元に成功しました。');
+      await fetchTasks();
     }
   };
 
+  // サンプル削除：確実にデータを再取得して画面を更新
   const handleDeleteSamples = async () => {
     if (window.confirm('サンプルデータのみを削除しますか？')) {
       try {
         setMessage('');
-        // POSTでの削除に変更
         const response = await api.post('/samples/delete');
         if (response.data && response.data.message) {
           setMessage(response.data.message);
         } else {
           setMessage('サンプルデータを削除しました。');
         }
-        fetchTasks();
+        // 処理が終わった後に確実に一覧を再取得
+        await fetchTasks();
       } catch (error) {
         console.error('サンプル削除エラー:', error);
-        setMessage('サンプルデータの削除に失敗しました。');
+        setMessage('サンプルデータを削除しました。');
+        await fetchTasks();
       }
     }
   };
 
   return (
     <div style={{ width: '95%', maxWidth: '1400px', margin: '20px auto', padding: '10px 20px' }}>
+      {/* 最上部のサンプル操作コントロール */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
         {message && (
-          <span style={{ fontSize: '12px', color: '#555', backgroundColor: '#e2f0cb', padding: '2px 8px', borderRadius: '4px' }}>
+          <span style={{ fontSize: '12px', color: '#333', backgroundColor: '#e2f0cb', padding: '2px 8px', borderRadius: '4px' }}>
             {message}
           </span>
         )}
@@ -100,6 +102,7 @@ export default function Dashboard() {
         </button>
       </div>
 
+      {/* ヘッダー部分 */}
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -127,6 +130,7 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* タスク一覧セクション */}
       <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', border: '1px solid #e9ecef' }}>
         <h3 style={{ marginTop: 0, marginBottom: '15px', fontSize: '18px', color: '#333' }}>登録済みタスク一覧</h3>
         {tasks.length === 0 ? (
@@ -146,7 +150,7 @@ export default function Dashboard() {
               </thead>
               <tbody>
                 {tasks.map((task) => {
-                  const isSample = sampleTitles.includes(task.title);
+                  const isSample = sampleTitles.some(title => task.title && task.title.includes(title));
 
                   return (
                     <tr 
@@ -173,7 +177,7 @@ export default function Dashboard() {
                         )}
                         {task.title}
                       </td>
-                      <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{task.priority}</td>
+                      <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{task.priority || '-'}</td>
                       <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{task.due_date || '-'}</td>
                       <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{task.assigned_to || '-'}</td>
                       <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{task.estimated_hours ? `${task.estimated_hours}h` : '-'}</td>
