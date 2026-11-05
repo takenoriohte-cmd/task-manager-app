@@ -31,13 +31,12 @@ export default function Dashboard() {
     }
   };
 
-  // サンプルデータを復元する処理（すでに存在する場合はメッセージを優しく表示）
+  // サンプルデータを復元する処理
   const handleRestoreSamples = async () => {
     try {
       setMessage('');
       const response = await api.post('/samples');
       
-      // バックエンドからメッセージが返ってきた場合の処理
       if (response.data && response.data.message) {
         setMessage(response.data.message);
       } else {
@@ -47,7 +46,6 @@ export default function Dashboard() {
       fetchTasks();
     } catch (error) {
       console.error('サンプル復元エラー:', error);
-      // すでにサンプルが存在する場合などのメッセージを安全に拾う
       if (error.response && error.response.data && error.response.data.message) {
         setMessage(error.response.data.message);
       } else {
@@ -56,16 +54,23 @@ export default function Dashboard() {
     }
   };
 
-  // サンプルデータを削除する処理
+  // サンプルデータだけを削除する処理
   const handleDeleteSamples = async () => {
-    if (window.confirm('すべてのデータ（サンプル含む）を削除しますか？')) {
+    if (window.confirm('サンプルデータのみを削除しますか？')) {
       try {
-        await api.delete('/samples');
-        setMessage('データをすべて削除しました。');
+        setMessage('');
+        const response = await api.delete('/samples');
+        
+        if (response.data && response.data.message) {
+          setMessage(response.data.message);
+        } else {
+          setMessage('サンプルデータを削除しました。');
+        }
+        
         fetchTasks();
       } catch (error) {
         console.error('サンプル削除エラー:', error);
-        alert('データの削除に失敗しました。');
+        setMessage('サンプルデータの削除に失敗しました。');
       }
     }
   };
@@ -89,7 +94,7 @@ export default function Dashboard() {
           onClick={handleDeleteSamples} 
           style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '12px', padding: 0, textDecoration: 'underline' }}
         >
-          [データ全削除]
+          [サンプル削除]
         </button>
       </div>
 
