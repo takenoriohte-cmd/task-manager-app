@@ -7,6 +7,15 @@ export default function Dashboard() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  // サンプルタイトルの定義（判定用）
+  const sampleTitles = [
+    "要件定義書の作成",
+    "画面デザインの検討",
+    "データベース設計",
+    "API実装",
+    "結合テスト"
+  ];
+
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -31,18 +40,15 @@ export default function Dashboard() {
     }
   };
 
-  // サンプルデータを復元する処理
   const handleRestoreSamples = async () => {
     try {
       setMessage('');
       const response = await api.post('/samples');
-      
       if (response.data && response.data.message) {
         setMessage(response.data.message);
       } else {
         setMessage('サンプルデータを復元しました！');
       }
-      
       fetchTasks();
     } catch (error) {
       console.error('サンプル復元エラー:', error);
@@ -54,19 +60,16 @@ export default function Dashboard() {
     }
   };
 
-  // サンプルデータだけを削除する処理
   const handleDeleteSamples = async () => {
     if (window.confirm('サンプルデータのみを削除しますか？')) {
       try {
         setMessage('');
         const response = await api.delete('/samples');
-        
         if (response.data && response.data.message) {
           setMessage(response.data.message);
         } else {
           setMessage('サンプルデータを削除しました。');
         }
-        
         fetchTasks();
       } catch (error) {
         console.error('サンプル削除エラー:', error);
@@ -76,8 +79,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '20px' }}>
-      {/* 最上部の控えめなサンプル操作リンクとメッセージ表示 */}
+    <div style={{ width: '95%', maxWidth: '1400px', margin: '20px auto', padding: '10px 20px' }}>
+      {/* 最上部のサンプル操作コントロール */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
         {message && (
           <span style={{ fontSize: '12px', color: '#555', backgroundColor: '#e2f0cb', padding: '2px 8px', borderRadius: '4px' }}>
@@ -86,7 +89,7 @@ export default function Dashboard() {
         )}
         <button 
           onClick={handleRestoreSamples} 
-          style={{ background: 'none', border: 'none', color: '#6c757d', cursor: 'pointer', fontSize: '12px', padding: 0, textDecoration: 'underline' }}
+          style={{ background: 'none', border: 'none', color: '#007bff', cursor: 'pointer', fontSize: '12px', padding: 0, textDecoration: 'underline' }}
         >
           [サンプル復元]
         </button>
@@ -136,38 +139,64 @@ export default function Dashboard() {
             <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff' }}>
               <thead>
                 <tr style={{ backgroundColor: '#e9ecef', textAlign: 'left' }}>
-                  <th style={{ padding: '10px', border: '1px solid #dee2e6' }}>タイトル</th>
-                  <th style={{ padding: '10px', border: '1px solid #dee2e6' }}>優先度</th>
-                  <th style={{ padding: '10px', border: '1px solid #dee2e6' }}>期限</th>
-                  <th style={{ padding: '10px', border: '1px solid #dee2e6' }}>担当者</th>
-                  <th style={{ padding: '10px', border: '1px solid #dee2e6' }}>工数</th>
-                  <th style={{ padding: '10px', border: '1px solid #dee2e6' }}>操作</th>
+                  <th style={{ padding: '12px', border: '1px solid #dee2e6' }}>タイトル</th>
+                  <th style={{ padding: '12px', border: '1px solid #dee2e6' }}>優先度</th>
+                  <th style={{ padding: '12px', border: '1px solid #dee2e6' }}>期限</th>
+                  <th style={{ padding: '12px', border: '1px solid #dee2e6' }}>担当者</th>
+                  <th style={{ padding: '12px', border: '1px solid #dee2e6' }}>工数</th>
+                  <th style={{ padding: '12px', border: '1px solid #dee2e6' }}>操作</th>
                 </tr>
               </thead>
               <tbody>
-                {tasks.map((task) => (
-                  <tr key={task.id}>
-                    <td style={{ padding: '10px', border: '1px solid #dee2e6' }}>{task.title}</td>
-                    <td style={{ padding: '10px', border: '1px solid #dee2e6' }}>{task.priority}</td>
-                    <td style={{ padding: '10px', border: '1px solid #dee2e6' }}>{task.due_date || '-'}</td>
-                    <td style={{ padding: '10px', border: '1px solid #dee2e6' }}>{task.assigned_to || '-'}</td>
-                    <td style={{ padding: '10px', border: '1px solid #dee2e6' }}>{task.estimated_hours ? `${task.estimated_hours}h` : '-'}</td>
-                    <td style={{ padding: '10px', border: '1px solid #dee2e6' }}>
-                      <button 
-                        onClick={() => navigate(`/tasks/edit/${task.id}`)} 
-                        style={{ marginRight: '5px', padding: '5px 10px', backgroundColor: '#ffc107', color: '#000', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
-                      >
-                        編集
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(task.id)} 
-                        style={{ padding: '5px 10px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
-                      >
-                        削除
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {tasks.map((task) => {
+                  const isSample = sampleTitles.includes(task.title);
+
+                  return (
+                    <tr 
+                      key={task.id} 
+                      style={{ 
+                        backgroundColor: isSample ? '#f9fafb' : '#ffffff',
+                        color: isSample ? '#6c757d' : '#212529'
+                      }}
+                    >
+                      <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>
+                        {isSample && (
+                          <span style={{ 
+                            display: 'inline-block', 
+                            backgroundColor: '#e9ecef', 
+                            color: '#495057', 
+                            fontSize: '11px', 
+                            padding: '1px 6px', 
+                            borderRadius: '3px', 
+                            marginRight: '8px',
+                            fontWeight: 'bold'
+                          }}>
+                            サンプル
+                          </span>
+                        )}
+                        {task.title}
+                      </td>
+                      <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{task.priority}</td>
+                      <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{task.due_date || '-'}</td>
+                      <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{task.assigned_to || '-'}</td>
+                      <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{task.estimated_hours ? `${task.estimated_hours}h` : '-'}</td>
+                      <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>
+                        <button 
+                          onClick={() => navigate(`/tasks/edit/${task.id}`)} 
+                          style={{ marginRight: '5px', padding: '5px 10px', backgroundColor: '#ffc107', color: '#000', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
+                        >
+                          編集
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(task.id)} 
+                          style={{ padding: '5px 10px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
+                        >
+                          削除
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
