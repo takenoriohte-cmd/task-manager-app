@@ -30,9 +30,35 @@ export default function Dashboard() {
     }
   };
 
+  // サンプルデータを投入する処理
+  const handleInsertSamples = async () => {
+    try {
+      await api.post('/samples');
+      alert('サンプルデータを投入しました！');
+      fetchTasks();
+    } catch (error) {
+      console.error('サンプル投入エラー:', error);
+      alert('サンプルデータの投入に失敗しました。');
+    }
+  };
+
+  // サンプルデータを削除する処理
+  const handleDeleteSamples = async () => {
+    if (window.confirm('すべてのデータ（サンプル含む）を削除しますか？')) {
+      try {
+        await api.delete('/samples');
+        alert('データをすべて削除しました！');
+        fetchTasks();
+      } catch (error) {
+        console.error('サンプル削除エラー:', error);
+        alert('データの削除に失敗しました。');
+      }
+    }
+  };
+
   return (
     <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '20px' }}>
-      {/* ヘッダー部分：タイトルと操作ボタン群 */}
+      {/* ヘッダー部分 */}
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -44,7 +70,13 @@ export default function Dashboard() {
         paddingBottom: '15px'
       }}>
         <h2 style={{ margin: 0, fontSize: '24px' }}>ダッシュボード</h2>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button onClick={handleInsertSamples} style={{ padding: '8px 12px', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', whiteSpace: 'nowrap' }}>
+            📥 サンプル投入
+          </button>
+          <button onClick={handleDeleteSamples} style={{ padding: '8px 12px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', whiteSpace: 'nowrap' }}>
+            🗑️ サンプル削除
+          </button>
           <Link to="/projects" style={{ padding: '8px 14px', backgroundColor: '#17a2b8', color: '#fff', textDecoration: 'none', borderRadius: '4px', fontSize: '14px', whiteSpace: 'nowrap' }}>
             📁 プロジェクト一覧
           </Link>
@@ -54,7 +86,7 @@ export default function Dashboard() {
           <Link to="/tasks/new" style={{ padding: '8px 14px', backgroundColor: '#007bff', color: '#fff', textDecoration: 'none', borderRadius: '4px', fontSize: '14px', whiteSpace: 'nowrap' }}>
             + 新規タスク作成
           </Link>
-          <Link to="/login" style={{ padding: '8px 14px', backgroundColor: '#dc3545', color: '#fff', textDecoration: 'none', borderRadius: '4px', fontSize: '14px', whiteSpace: 'nowrap' }}>
+          <Link to="/login" style={{ padding: '8px 14px', backgroundColor: '#343a40', color: '#fff', textDecoration: 'none', borderRadius: '4px', fontSize: '14px', whiteSpace: 'nowrap' }}>
             ログアウト
           </Link>
         </div>
@@ -64,7 +96,7 @@ export default function Dashboard() {
       <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', border: '1px solid #e9ecef' }}>
         <h3 style={{ marginTop: 0, marginBottom: '15px', fontSize: '18px', color: '#333' }}>登録済みタスク一覧</h3>
         {tasks.length === 0 ? (
-          <p style={{ color: '#666', margin: 0 }}>タスクがまだ登録されていません。「新規タスク作成」から追加してみましょう。</p>
+          <p style={{ color: '#666', margin: 0 }}>タスクがまだ登録されていません。「サンプル投入」ボタンを押すか、「新規タスク作成」から追加してみましょう。</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff' }}>
