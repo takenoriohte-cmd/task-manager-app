@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 
@@ -9,7 +9,23 @@ export default function TaskCreate() {
   const [dueDate, setDueDate] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [estimatedHours, setEstimatedHours] = useState('');
+  const [projectId, setProjectId] = useState(''); // 追加：選択中のプロジェクトID
+  const [projects, setProjects] = useState([]);   // 追加：プロジェクト一覧のリスト
   const navigate = useNavigate();
+
+  // プロジェクト一覧を事前に取得
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await api.get('/projects');
+      setProjects(response.data);
+    } catch (error) {
+      console.error('プロジェクト一覧取得エラー:', error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,6 +37,7 @@ export default function TaskCreate() {
         due_date: dueDate || null,
         assigned_to: assignedTo,
         estimated_hours: estimatedHours ? parseFloat(estimatedHours) : null,
+        project_id: projectId ? Number(projectId) : null, // 追加：プロジェクトIDを送信
         status: '未着手'
       });
       alert('タスクを作成しました！');
@@ -35,6 +52,17 @@ export default function TaskCreate() {
     <div style={{ maxWidth: '600px', margin: '30px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
       <h2>タスク作成画面</h2>
       <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '15px' }}>
+          <label>所属プロジェクト: </label><br />
+          <select value={projectId} onChange={(e) => setProjectId(e.target.value)} style={{ width: '100%', padding: '8px' }}>
+            <option value="">-- プロジェクトを選択（任意） --</option>
+            {projects.map((project) => (
+              <option key={project.project_id} value={project.project_id}>
+                {project.project_name}
+              </option>
+            ))}
+          </select>
+        </div>
         <div style={{ marginBottom: '15px' }}>
           <label>タスク名: </label><br />
           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} style={{ width: '100%', padding: '8px' }} required />
