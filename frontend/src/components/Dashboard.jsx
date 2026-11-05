@@ -4,6 +4,7 @@ import api from '../api';
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,15 +31,28 @@ export default function Dashboard() {
     }
   };
 
-  // サンプルデータを投入する処理
-  const handleInsertSamples = async () => {
+  // サンプルデータを復元する処理（すでに存在する場合はメッセージを優しく表示）
+  const handleRestoreSamples = async () => {
     try {
-      await api.post('/samples');
-      alert('サンプルデータを投入しました！');
+      setMessage('');
+      const response = await api.post('/samples');
+      
+      // バックエンドからメッセージが返ってきた場合の処理
+      if (response.data && response.data.message) {
+        setMessage(response.data.message);
+      } else {
+        setMessage('サンプルデータを復元しました！');
+      }
+      
       fetchTasks();
     } catch (error) {
-      console.error('サンプル投入エラー:', error);
-      alert('サンプルデータの投入に失敗しました。');
+      console.error('サンプル復元エラー:', error);
+      // すでにサンプルが存在する場合などのメッセージを安全に拾う
+      if (error.response && error.response.data && error.response.data.message) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage('サンプルデータの復元に失敗しました。');
+      }
     }
   };
 
@@ -47,7 +61,7 @@ export default function Dashboard() {
     if (window.confirm('すべてのデータ（サンプル含む）を削除しますか？')) {
       try {
         await api.delete('/samples');
-        alert('データをすべて削除しました！');
+        setMessage('データをすべて削除しました。');
         fetchTasks();
       } catch (error) {
         console.error('サンプル削除エラー:', error);
@@ -58,13 +72,18 @@ export default function Dashboard() {
 
   return (
     <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '20px' }}>
-      {/* 最上部の控えめなサンプル操作リンク（端っこに配置） */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '10px' }}>
+      {/* 最上部の控えめなサンプル操作リンクとメッセージ表示 */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
+        {message && (
+          <span style={{ fontSize: '12px', color: '#555', backgroundColor: '#e2f0cb', padding: '2px 8px', borderRadius: '4px' }}>
+            {message}
+          </span>
+        )}
         <button 
-          onClick={handleInsertSamples} 
+          onClick={handleRestoreSamples} 
           style={{ background: 'none', border: 'none', color: '#6c757d', cursor: 'pointer', fontSize: '12px', padding: 0, textDecoration: 'underline' }}
         >
-          [サンプル投入]
+          [サンプル復元]
         </button>
         <button 
           onClick={handleDeleteSamples} 
@@ -106,7 +125,7 @@ export default function Dashboard() {
       <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', border: '1px solid #e9ecef' }}>
         <h3 style={{ marginTop: 0, marginBottom: '15px', fontSize: '18px', color: '#333' }}>登録済みタスク一覧</h3>
         {tasks.length === 0 ? (
-          <p style={{ color: '#666', margin: 0 }}>タスクがまだ登録されていません。「新規タスク作成」から追加してみましょう。</p>
+          <p style={{ color: '#666', margin: 0 }}>タスクがまだ登録されていません。「新規タスク作成」または右上の「サンプル復元」から追加してみましょう。</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff' }}>
