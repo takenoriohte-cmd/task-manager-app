@@ -58,6 +58,22 @@ export default function Dashboard() {
 
   return (
     <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '20px' }}>
+      {/* 最上部の控えめなサンプル操作リンク（端っこに配置） */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '10px' }}>
+        <button 
+          onClick={handleInsertSamples} 
+          style={{ background: 'none', border: 'none', color: '#6c757d', cursor: 'pointer', fontSize: '12px', padding: 0, textDecoration: 'underline' }}
+        >
+          [サンプル投入]
+        </button>
+        <button 
+          onClick={handleDeleteSamples} 
+          style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '12px', padding: 0, textDecoration: 'underline' }}
+        >
+          [データ全削除]
+        </button>
+      </div>
+
       {/* ヘッダー部分 */}
       <div style={{ 
         display: 'flex', 
@@ -71,12 +87,6 @@ export default function Dashboard() {
       }}>
         <h2 style={{ margin: 0, fontSize: '24px' }}>ダッシュボード</h2>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button onClick={handleInsertSamples} style={{ padding: '8px 12px', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', whiteSpace: 'nowrap' }}>
-            📥 サンプル投入
-          </button>
-          <button onClick={handleDeleteSamples} style={{ padding: '8px 12px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', whiteSpace: 'nowrap' }}>
-            🗑️ サンプル削除
-          </button>
           <Link to="/projects" style={{ padding: '8px 14px', backgroundColor: '#17a2b8', color: '#fff', textDecoration: 'none', borderRadius: '4px', fontSize: '14px', whiteSpace: 'nowrap' }}>
             📁 プロジェクト一覧
           </Link>
@@ -96,7 +106,7 @@ export default function Dashboard() {
       <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', border: '1px solid #e9ecef' }}>
         <h3 style={{ marginTop: 0, marginBottom: '15px', fontSize: '18px', color: '#333' }}>登録済みタスク一覧</h3>
         {tasks.length === 0 ? (
-          <p style={{ color: '#666', margin: 0 }}>タスクがまだ登録されていません。「サンプル投入」ボタンを押すか、「新規タスク作成」から追加してみましょう。</p>
+          <p style={{ color: '#666', margin: 0 }}>タスクがまだ登録されていません。「新規タスク作成」から追加してみましょう。</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff' }}>
