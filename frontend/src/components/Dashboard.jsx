@@ -7,7 +7,6 @@ export default function Dashboard() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  // サンプルタイトルの定義（判定用）
   const sampleTitles = [
     "要件定義書の作成",
     "画面デザインの検討",
@@ -64,7 +63,8 @@ export default function Dashboard() {
     if (window.confirm('サンプルデータのみを削除しますか？')) {
       try {
         setMessage('');
-        const response = await api.delete('/samples');
+        // POSTでの削除に変更
+        const response = await api.post('/samples/delete');
         if (response.data && response.data.message) {
           setMessage(response.data.message);
         } else {
@@ -80,7 +80,6 @@ export default function Dashboard() {
 
   return (
     <div style={{ width: '95%', maxWidth: '1400px', margin: '20px auto', padding: '10px 20px' }}>
-      {/* 最上部のサンプル操作コントロール */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
         {message && (
           <span style={{ fontSize: '12px', color: '#555', backgroundColor: '#e2f0cb', padding: '2px 8px', borderRadius: '4px' }}>
@@ -101,7 +100,6 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* ヘッダー部分 */}
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -129,7 +127,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* タスク一覧セクション */}
       <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', border: '1px solid #e9ecef' }}>
         <h3 style={{ marginTop: 0, marginBottom: '15px', fontSize: '18px', color: '#333' }}>登録済みタスク一覧</h3>
         {tasks.length === 0 ? (
